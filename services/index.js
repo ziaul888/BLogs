@@ -1,13 +1,13 @@
 import { request, gql } from "graphql-request";
 
-const graphqlApi = process.env.NEXT_PUBLIC_GRAPHCMS_ENDPOINT;
+const graphqlAPI = process.env.NEXT_PUBLIC_GRAPHCMS_ENDPOINT;
 
 export const getPost = async () => {
   const query = gql`
-    query MyQuery {
+    query MyQuery () {
       postsConnection {
         edges {
-          node {
+           node {
             author {
               bio
               name
@@ -33,6 +33,50 @@ export const getPost = async () => {
     }
   `;
 
-  const result = await request(graphqlApi, query);
+  const result = await request(graphqlAPI, query);
   return result.postsConnection.edges;
+};
+
+export const getRecentPosts = async () => {
+  const query = gql`
+    query GetPostDetails() {
+      posts(
+        orderBy: createdAt_ASC
+        last: 3
+      ) {
+        tilte
+        featureImage {
+          url
+        }
+        createdAt
+        slug
+      }
+    }
+  `;
+  const result = await request(graphqlAPI, query);
+
+  return result.posts;
+};
+export const getSimilarPosts = async (categories, slug) => {
+  const query = gql`
+    query GetPostDetails($slug: String!, $categories: [String!]) {
+      posts(
+        where: {
+          slug_not: $slug
+          AND: { categories_some: { slug_in: $categories } }
+        }
+        last: 3
+      ) {
+        tilte
+        featureImage {
+          url
+        }
+        createdAt
+        slug
+      }
+    }
+  `;
+  const result = await request(graphqlAPI, query, { slug, categories });
+
+  return result.posts;
 };
