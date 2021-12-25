@@ -1,15 +1,13 @@
-import React, { useContext } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-
-const categories = [
-  { name: "React", slug: "react" },
-  {
-    name: "Web Development ",
-    slug: "web-dev",
-  },
-];
+import { getCategory } from "../services";
 
 const Header = () => {
+  const [category, setCategory] = useState([]);
+
+  useEffect(() => {
+    getCategory().then((newCategory) => setCategory(newCategory));
+  }, []);
   return (
     <>
       <div className="container mx-auto px-10 mb-8">
@@ -22,10 +20,13 @@ const Header = () => {
             </Link>
           </div>
           <div className="hidden md:float-left md:contents">
-            {categories.map((category) => (
-              <Link href={`/category/?{category.slug}`} key={categories.slug}>
+            {category.map((tempCategory) => (
+              <Link
+                href={`/category/${tempCategory.slug}`}
+                key={tempCategory.slug}
+              >
                 <span className="md:float-right mt-2 align-middle text-white ml-4 font-semibold cursor-pointer">
-                  {category.name}
+                  {tempCategory.name}
                 </span>
               </Link>
             ))}
