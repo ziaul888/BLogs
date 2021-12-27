@@ -15,7 +15,7 @@ const PostDetails = ({ post }) => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         <div className="col-span-1 lg:col-span-8">
           <PostDetail post={post} />
-          <Author post={post.author} />
+          <Author author={post.author} />
           <CommentsForm slug={post.slug} />
           <Comments slug={post.slug} />
         </div>
@@ -46,6 +46,6 @@ export async function getStaticPaths() {
 
   return {
     paths: posts.map(({ node: { slug } }) => ({ params: { slug } })),
-    fallback:false
+    fallback: false,
   };
 }

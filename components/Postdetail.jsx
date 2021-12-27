@@ -106,7 +106,7 @@ const Postdetail = ({ post }) => {
         <h1 className="mb-8 text-3xl font-semibold text-center">
           {post.tilte}
         </h1>
-        {console.log(post.content.raw)}
+
         {post.content.raw.children.map((typeObj, index) => {
           const children = typeObj.children.map((item, itemIndex) =>
             getContentFragment(itemIndex, item.text, item)

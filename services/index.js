@@ -128,3 +128,5 @@ export const getCategory = async () => {
 
   return result.categories;
 };
+
+export const submitComment = async (obj) => {};
