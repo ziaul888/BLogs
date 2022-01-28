@@ -1,36 +1,47 @@
 import React, { useRef, useState, useEffect } from "react";
+import { submitComment } from "../services/index";
 
-const CommentsForm = () => {
+const CommentsForm = ({ slug }) => {
   const [error, setError] = useState(false);
-  const [localStorge, setLocalStorge] = useState(null);
+  const [localStorage, setLocalStorge] = useState(null);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   const commentEl = useRef();
   const nameEl = useRef();
   const emailEl = useRef();
-  const storeEl = useRef();
+  const storeDataEl = useRef();
+
+  useEffect(() => {
+    nameEl.current.value = window.localStorage.getItem("name");
+    emailEl.current.value = window.localStorage.getItem("email");
+  }, []);
 
   const handleCommentSubmission = () => {
-      setError(false)
-      const {value:comment} =commentEl.current;
-      const {value:name} =nameEl.current;
-      const {value:email} =emailEl.current;
-      const {checked:storeData} =storeEl.current;
-      if(!comment||!name||!email){
-          setError(ture)
-          return
-      }
-    const commentObj= {name,email,comment,slug}
-
-    if(storedata){
-        localStorge.setItem("name",name)
-        localStorge.setItem("email",email)
-    }else{
-        localStorge.removeItem("name",name)
-        localStorge.removeItem("email",emial)
+    setError(false);
+    const { value: comment } = commentEl.current;
+    const { value: name } = nameEl.current;
+    const { value: email } = emailEl.current;
+    const { checked: storeData } = storeDataEl.current;
+    if (!comment || !name || !email) {
+      setError(true);
+      return;
     }
+    const commentObj = { name, email, comment, slug };
 
-    };
+    if (storeData) {
+      window.localStorage.setItem("name", name);
+      window.localStorage.setItem("email", email);
+    } else {
+      window.localStorage.removeItem("name");
+      window.localStorage.removeItem("email");
+    }
+    submitComment(commentObj).then((res) => {
+      setShowSuccessMessage(true);
+      setTimeout(() => {
+        setShowSuccessMessage(false);
+      }, 3000);
+    });
+  };
 
   return (
     <div className="bg-white shadow-lg rounded-lg p-8 pb-12 mb-8">
@@ -62,16 +73,21 @@ const CommentsForm = () => {
         />
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-          <div>
-              <input 
-              ref={storeEl} 
-              type="checkbox"
-              id="storeData"
-              name="storeData"
-
-              />
-              <label className="text-gray-500 cursor-pointer ml-2" htmlFor="storedata"> Save my email and name for the next.</label>
-          </div>
+        <div>
+          <input
+            ref={storeDataEl}
+            type="checkbox"
+            id="storeData"
+            name="storeData"
+          />
+          <label
+            className="text-gray-500 cursor-pointer ml-2"
+            htmlFor="storedata"
+          >
+            {" "}
+            Save my email and name for the next.
+          </label>
+        </div>
       </div>
       {error && <p className="text-xs text-red-100"> All fields are require</p>}
       <div className="mt-8">
@@ -82,7 +98,11 @@ const CommentsForm = () => {
         >
           Post Comment
         </button>
-        {showSuccessMessage && <span className="text-xl float-right font-semibold mt-3 text-green-500">Comment submited for reveiw</span>}
+        {showSuccessMessage && (
+          <span className="text-xl float-right font-semibold mt-3 text-green-500">
+            Comment submited for reveiw
+          </span>
+        )}
       </div>
     </div>
   );
