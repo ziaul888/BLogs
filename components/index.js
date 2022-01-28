@@ -6,3 +6,5 @@ export {default as Comments} from "./Comments";
 export {default as CommentsForm} from "./CommentsForm";
 export {default as Author} from "./Author.jsx";
 export {default as PostDetail} from "./Postdetail"
+export {default as FeaturedPostCard} from "./FeaturedPostCard";
+export { default as Loader } from './Loader';
